@@ -12,39 +12,41 @@ app.listen(PORT, () => {
   console.log(`Web server running on port ${PORT}`);
 });
 
-console.log('Скрипт index.js успешно запущен!');
-
 function createBot() {
-  console.log('Попытка создания бота и подключения к серверу...');
+  console.log('Создание экземпляра бота...');
   
   const bot = mineflayer.createBot({
     host: 'faceblood.aternos.me', 
     port: 54326,                 
     version: '1.20.1',            
-    username: 'AternosBot'        
+    username: 'AternosAFKBot'        
   });
 
   bot.on('spawn', () => {
-    console.log('Бот зашел на сервер!');
-    
-    setInterval(() => {
-      bot.look(bot.entity.yaw + 1, bot.entity.pitch, true);
-    }, 60000); 
+    console.log('Бот успешно зашел на сервер и заспавнился!');
   });
 
-  bot.on('chat', (username, message) => {
-    if (username === bot.username) return;
-    console.log(`${username}: ${message}`);
+  // Автоматически каждые 10 секунд поворачиваем голову, чтобы сервер не кикал за AFK
+  let moving = false;
+  bot.on('spawn', () => {
+    if (moving) return;
+    moving = true;
+    
+    setInterval(() => {
+      if (bot.entity) {
+        bot.look(bot.entity.yaw + 0.5, bot.entity.pitch, true);
+      }
+    }, 10000);
   });
 
   bot.on('end', (reason) => {
-    console.log('Бот отключился. Причина:', reason);
-    console.log('Переподключение через 10 секунд...');
-    setTimeout(createBot, 10000);
+    console.log('Бот отключился от сервера. Причина:', reason);
+    console.log('Попытка переподключения через 15 секунд...');
+    setTimeout(createBot, 15000);
   });
 
   bot.on('error', (err) => {
-    console.log('Ошибка бота:', err);
+    console.log('Ошибка в работе бота:', err);
   });
 }
 
