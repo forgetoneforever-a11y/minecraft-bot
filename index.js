@@ -1,7 +1,6 @@
-﻿const mineflayer = require('mineflayer');
+const mineflayer = require('mineflayer');
 const express = require('express');
 
-// Веб-сервер для UptimeRobot, чтобы хостинг не «засыпал»
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -13,11 +12,14 @@ app.listen(PORT, () => {
   console.log(`Web server running on port ${PORT}`);
 });
 
-// Функция подключения бота к серверу Aternos
+console.log('Скрипт index.js успешно запущен!');
+
 function createBot() {
+  console.log('Попытка создания бота и подключения к серверу...');
+  
   const bot = mineflayer.createBot({
     host: 'faceblood.aternos.me', 
-    port: 54326,                  
+    port: 54326,                 
     version: '1.20.1',            
     username: 'AternosBot'        
   });
@@ -25,7 +27,6 @@ function createBot() {
   bot.on('spawn', () => {
     console.log('Бот зашел на сервер!');
     
-    // Защита от кика за AFK: поворот головы каждые 60 секунд
     setInterval(() => {
       bot.look(bot.entity.yaw + 1, bot.entity.pitch, true);
     }, 60000); 
@@ -36,8 +37,9 @@ function createBot() {
     console.log(`${username}: ${message}`);
   });
 
-  bot.on('end', () => {
-    console.log('Бот отключился. Переподключение через 10 секунд...');
+  bot.on('end', (reason) => {
+    console.log('Бот отключился. Причина:', reason);
+    console.log('Переподключение через 10 секунд...');
     setTimeout(createBot, 10000);
   });
 
