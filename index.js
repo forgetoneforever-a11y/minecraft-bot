@@ -16,8 +16,8 @@ function createBot() {
   console.log('Создание экземпляра бота...');
   
   const bot = mineflayer.createBot({
-    host: 'surgeonfish.aternos.host', 
-    port: 26693,                 
+    host: 'Excaliburx.aternos.me', // Пробуем основной постоянный адрес
+    port: 26693,                 // Актуальный порт из панели
     version: '1.20.1',            
     username: 'AternosAFKBot'        
   });
