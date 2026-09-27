@@ -1,23 +1,9 @@
-const mineflayer = require('mineflayer');
-const express = require('express');
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.get('/', (req, res) => {
-  res.send('Bot is active!');
-});
-
-app.listen(PORT, () => {
-  console.log(`Web server running on port ${PORT}`);
-});
-
 function createBot() {
   console.log('Создание экземпляра бота...');
   
   const bot = mineflayer.createBot({
-    host: 'Excaliburx.aternos.me', // Новый адрес сервера[cite: 2]
-    port: 26693,                 // Новый порт сервера[cite: 2]
+    host: 'surgeonfish.aternos.host', // Новый хост от Aternos
+    port: 26693,                     // Порт
     version: '1.20.1',            
     username: 'AternosAFKBot'        
   });
@@ -49,5 +35,3 @@ function createBot() {
     console.log('Ошибка в работе бота:', err);
   });
 }
-
-createBot();
