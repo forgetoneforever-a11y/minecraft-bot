@@ -13,41 +13,50 @@ app.listen(PORT, () => {
 });
 
 function createBot() {
-  console.log('Создание экземпляра бота...');
+  console.log('Попытка инициализации mineflayer...');
   
-  const bot = mineflayer.createBot({
-    host: 'Excaliburx.aternos.me', // Пробуем основной постоянный адрес
-    port: 26693,                 // Актуальный порт из панели
-    version: '1.20.1',            
-    username: 'AternosAFKBot'        
-  });
+  try {
+    const bot = mineflayer.createBot({
+      host: 'Excaliburx.aternos.me', // Или попробуй поменять на динамический IP, если тут зависнет
+      port: 26693,                 
+      version: '1.20.1',            
+      username: 'AternosAFKBot'        
+    });
 
-  bot.on('spawn', () => {
-    console.log('Бот успешно зашел на сервер и заспавнился!');
-  });
+    console.log('Объект бота создан, ожидаем подключение...');
 
-  // Автоматически каждые 10 секунд поворачиваем голову, чтобы сервер не кикал за AFK
-  let moving = false;
-  bot.on('spawn', () => {
-    if (moving) return;
-    moving = true;
-    
-    setInterval(() => {
-      if (bot.entity) {
-        bot.look(bot.entity.yaw + 0.5, bot.entity.pitch, true);
-      }
-    }, 10000);
-  });
+    bot.on('spawn', () => {
+      console.log('Бот успешно зашел на сервер и заспавнился!');
+    });
 
-  bot.on('end', (reason) => {
-    console.log('Бот отключился от сервера. Причина:', reason);
-    console.log('Попытка переподключения через 15 секунд...');
+    // Автоматически каждые 10 секунд поворачиваем голову, чтобы сервер не кикал за AFK
+    let moving = false;
+    bot.on('spawn', () => {
+      if (moving) return;
+      moving = true;
+      
+      setInterval(() => {
+        if (bot.entity) {
+          bot.look(bot.entity.yaw + 0.5, bot.entity.pitch, true);
+        }
+      }, 10000);
+    });
+
+    bot.on('end', (reason) => {
+      console.log('Бот отключился от сервера. Причина:', reason);
+      console.log('Попытка переподключения через 15 секунд...');
+      setTimeout(createBot, 15000);
+    });
+
+    bot.on('error', (err) => {
+      console.log('Ошибка в работе бота (event error):', err);
+    });
+
+  } catch (error) {
+    console.log('Критическая ошибка при создании бота:', error);
     setTimeout(createBot, 15000);
-  });
-
-  bot.on('error', (err) => {
-    console.log('Ошибка в работе бота:', err);
-  });
+  }
 }
 
-createBot();
+// Запускаем бота с небольшой задержкой, чтобы веб-сервер успел поднять порт
+setTimeout(createBot, 3000);
